@@ -2,9 +2,13 @@ package main
 
 import (
 	"fmt"
-	"strconv"
 	"strings"
 )
+
+type Point struct {
+	i int
+	j int
+}
 
 func main() {
 	var A, B, C int
@@ -28,90 +32,45 @@ func main() {
 		grid[i] = []byte(s)
 	}
 
-	visited := make(map[string]struct{})
-	queue := []string{}
+	visited := make([][]bool, A)
 
-	var i, j, k int
+	for i := range visited {
+		visited[i] = make([]bool, B)
+	}
 
-	for len(queue) > 0 || i+j == 0 {
-		k++
-		visitedIndex := strconv.Itoa(i) + "," + strconv.Itoa(j)
-		// fmt.Println(visitedIndex, k)
+	visited[0][0] = true
 
-		// top
-		if i != 0 {
-			topIndex := strconv.Itoa(i-1) + "," + strconv.Itoa(j)
-			_, exists := visited[topIndex]
-			if grid[i-1][j] == '0' && !exists {
-				queue = append(queue, topIndex)
-				visited[topIndex] = struct{}{}
-			} else if grid[i-1][j] == '1' {
-				C++
-				visited[topIndex] = struct{}{}
+	queue := []Point{
+		{0, 0},
+	}
+
+	directions := []Point{
+		{-1, 0}, // top
+		{1, 0},  // bottom
+		{0, -1}, // left
+		{0, 1},  // right
+	}
+
+	for head := 0; head < len(queue); head++ {
+		current := queue[head]
+
+		for _, direction := range directions {
+			ni := current.i + direction.i
+			nj := current.j + direction.j
+
+			if ni < 0 || ni == A || nj < 0 || nj == B {
+				continue
+			}
+
+			if !visited[ni][nj] {
+				if grid[ni][nj] == '0' {
+					queue = append(queue, Point{ni, nj})
+					visited[ni][nj] = true
+				} else {
+					C++
+				}
 			}
 		}
-
-		// bottom
-		if i != A-1 {
-			bottomIndex := strconv.Itoa(i+1) + "," + strconv.Itoa(j)
-			_, exists := visited[bottomIndex]
-			if grid[i+1][j] == '0' && !exists {
-				// fmt.Println("bottomIndex", bottomIndex)
-				queue = append(queue, bottomIndex)
-				visited[bottomIndex] = struct{}{}
-			} else if grid[i+1][j] == '1' {
-				C++
-				visited[bottomIndex] = struct{}{}
-			}
-		}
-
-		// right
-		if j != B-1 {
-			rightIndex := strconv.Itoa(i) + "," + strconv.Itoa(j+1)
-			_, exists := visited[rightIndex]
-			if grid[i][j+1] == '0' && !exists {
-				queue = append(queue, rightIndex)
-				visited[rightIndex] = struct{}{}
-			} else if grid[i][j+1] == '1' {
-				C++
-				visited[rightIndex] = struct{}{}
-			}
-		}
-
-		// left
-		if j != 0 {
-			leftIndex := strconv.Itoa(i) + "," + strconv.Itoa(j-1)
-			_, exists := visited[leftIndex]
-			if grid[i][j-1] == '0' && !exists {
-				queue = append(queue, leftIndex)
-				visited[leftIndex] = struct{}{}
-			} else if grid[i][j-1] == '1' {
-				C++
-				visited[leftIndex] = struct{}{}
-			}
-		}
-
-		visited[visitedIndex] = struct{}{}
-
-		// fmt.Println(visited)
-
-		dequeue := queue[0]
-
-		next := strings.Split(dequeue, ",")
-
-		// fmt.Println(next)
-
-		nextI, err := strconv.Atoi(next[0])
-		nextJ, err := strconv.Atoi(next[1])
-
-		if err != nil {
-			fmt.Println(err)
-		}
-
-		i = nextI
-		j = nextJ
-
-		queue = queue[1:]
 	}
 
 	fmt.Println(C)
