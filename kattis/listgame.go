@@ -9,23 +9,23 @@ func main() {
 
 	fmt.Scan(&A)
 
-	//list := []int{2}
+	// list := []int{}
 
-	result := 1
+	result := 0
 
-	divider := 2
-
-	for A/divider != 1 {
-		if A%divider != 0 {
-			divider++
-			continue
+	for divider := 2; divider*divider <= A; divider++ {
+		for A%divider == 0 {
+			A = A / divider
+			// list = append(list, divider)
+			result++
 		}
-		A = A / divider
-		//list = append(list, divider)
+	}
+
+	if A > 1 {
 		result++
 	}
 
-	//fmt.Println(list)
-	//fmt.Println(len(list))
+	// fmt.Println(list)
+	// fmt.Println(len(list))
 	fmt.Println(result)
 }
